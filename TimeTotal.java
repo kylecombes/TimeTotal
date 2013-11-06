@@ -5,7 +5,12 @@ public class TimeTotal {
 			System.out.println("Please enter the filename.");
 			return;
 		}
-		TextIO.readFile(args[0]);
+		try {
+			TextIO.readFile(args[0]);
+		} catch (java.lang.IllegalArgumentException e) {
+			System.out.printf("Error: Could not find the file specified: \n\n\t\"" + args[0] + "\"\n");
+			System.exit(1);
+		}
 		int total = 0;
 		for (short lineNum = 1; !TextIO.eof(); lineNum++) {
 			String line = TextIO.getln();
