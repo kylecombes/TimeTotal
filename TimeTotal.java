@@ -1,17 +1,24 @@
 public class TimeTotal {
 
 	public static void main(String[] args) {
-		if (args.length == 0) {
-			System.out.println("Please enter the filename.");
+		if (args.length < 2) {
+			System.out.println("Please enter the hourly rate, followed by the filename. Ex: 40 log.txt");
 			return;
 		}
 		try {
-			TextIO.readFile(args[0]);
+			TextIO.readFile(args[1]);
 		} catch (java.lang.IllegalArgumentException e) {
-			System.out.printf("Error: Could not find the file specified: \n\n\t\"" + args[0] + "\"\n");
+			System.out.printf("Error: Could not load the file specified: \n\n\t\"" + args[1] + "\"\n");
 			System.exit(1);
 		}
-		int total = 0;
+		double rate;
+		try {
+			rate = Double.parseDouble(args[0]);
+		} catch (java.lang.Exception e) {
+			System.out.println("Error: Could not parse hourly rate entered. Valid formats are: 40 or 25.50");
+			return;
+		}
+		int total = 0; // Time worked, in minutes
 		for (short lineNum = 1; !TextIO.eof(); lineNum++) {
 			String line = TextIO.getln();
 			if (!(line.startsWith("Monday,") || line.startsWith("Tuesday")
@@ -34,7 +41,7 @@ public class TimeTotal {
 			total += result;
 		}
 		System.out.println();
-		System.out.printf("Total: %d hours and %d minutes, which is $%.2f.", total/60, total%60, ((double)total)/4.0);
+		System.out.printf("Total: %d hours and %d minutes, which is $%.2f.", total/60, total%60, calcMoney(total, rate));
 		
 		
 	}
@@ -75,5 +82,9 @@ public class TimeTotal {
 		if (str.charAt(pos) == 'p' && hrs != 12)
 			hrs += 12;
 		return (short)(hrs * 60 + mins);
+	}
+	
+	static double calcMoney(int time, double rate) {
+		return ((double)(time))*rate/60.0;
 	}
 }
